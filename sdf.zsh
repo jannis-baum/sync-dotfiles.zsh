@@ -42,7 +42,6 @@ function sdf() {
         git -C $dotfiles_dir pull
         echo "\e[1mupgrading submodules\e[0m"
         git -C $dotfiles_dir submodule foreach git pull
-        return
     fi
 
     local prev_dir=$(pwd)
