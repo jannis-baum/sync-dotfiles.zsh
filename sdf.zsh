@@ -34,8 +34,19 @@ function sdf() {
     # load config, go to dotfiles_dir and setup ignore
     local dotfiles_actions dotfiles_dir ignore_patterns
     typeset -A dotfiles_actions
-    [[ -n "$SDFRC_PATH" ]] && source "$SDFRC_PATH" || source ~/.sdfrc
+
+    [[ -z "$SDFRC_PATH" ]] && local SDFRC_PATH="$HOME/.sdfrc"
+    test -f "$SDFRC_PATH" && source "$SDFRC_PATH"
+    [[ -z "$dotfiles_dir" ]] && dotfiles_dir="$DOTFILES_DIR"
+
+    if [[ -z "$dotfiles_dir" ]]; then
+        echo 'Please set your dotfiles directory either in your .sdfrc or as the environment variable $DOTFILES_DIR'
+        return
+    fi
+
     dotfiles_dir=$(realpath $dotfiles_dir)
+    local prev_dir=$(pwd)
+    cd $dotfiles_dir
 
     if [[ "$1" == '-u' || "$1" == '--upgrade' ]]; then
         echo "\e[1mupgrading repo\e[0m"
@@ -44,8 +55,6 @@ function sdf() {
         git -C $dotfiles_dir submodule foreach git pull
     fi
 
-    local prev_dir=$(pwd)
-    cd $dotfiles_dir
     ignore_patterns+=('.git/*' '.gitignore' '.gitmodules')
 
     # make it possible for read to get answer from stdin (e.g. `yes`)
