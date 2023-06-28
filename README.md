@@ -72,3 +72,12 @@ dotfiles_actions=( \
 
 You can find more examples for actions in [my
 `sdfrc`](https://github.com/jannis-baum/dotfiles/blob/main/.sdfrc).
+
+## Running `sdf`
+
+`sdf` has the following options.
+
+- `-y`, `--yes`: install all changed dotfiles without prompting
+- `-A`, `--no-actions`: don't run configured install actions
+- `-u`, `--upgrade`: pull dotfiles repo and all submodules before syncing
+- `-h`, `--help`: show the help message and exit

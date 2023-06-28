@@ -39,6 +39,7 @@ options:
   -h, --help            show this help message and exit
   -y, --yes             install all changed dotfiles without prompting
   -A, --no-actions      don't run configured install actions
+  -u, --upgrade         pull dotfiles repo and all submodules before syncing
 EOF
     fi
 
