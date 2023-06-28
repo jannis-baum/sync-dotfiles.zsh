@@ -2,6 +2,8 @@
 
 sync-dotfiles or `sdf` is a package manager for your dotfiles.
 
+![`sdf`-showcase](../assets/sdf-showcase.gif)
+
 ## Features
 
 - Manage your dotfiles repo with all files exactly where they should be in your
