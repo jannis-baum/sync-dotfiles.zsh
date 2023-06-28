@@ -21,12 +21,13 @@ function sdf() {
             "-h" | "--help") arg_help=1; continue;;
             "-y" | "--yes") local arg_yes=1; continue;;
             "-A" | "--no-actions") local arg_no_actions=1; continue;;
+            "-u" | "--upgrade") local arg_upgrade=1; continue;;
         esac
         [[ -z "$arg" ]] && continue
         if [[ "$arg" == "-"* ]]; then
             echo "Illegal option: $arg"
             arg_help=1
-            continue
+            break
         fi
     done
 
@@ -59,11 +60,11 @@ EOF
     local prev_dir=$(pwd)
     cd $dotfiles_dir
 
-    if [[ "$1" == '-u' || "$1" == '--upgrade' ]]; then
+    if [[ -n "$arg_upgrade" ]]; then
         echo "\e[1mupgrading repo\e[0m"
-        git -C $dotfiles_dir pull
+        git pull
         echo "\e[1mupgrading submodules\e[0m"
-        git -C $dotfiles_dir submodule foreach git pull
+        git submodule foreach git pull
     fi
 
     ignore_patterns+=('.git/*' '.gitignore' '.gitmodules')
