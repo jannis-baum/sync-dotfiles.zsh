@@ -14,6 +14,8 @@ sync-dotfiles or `sdf` is a package manager for your dotfiles.
   your `.zshrc` so all your configs are always loaded and up to date
 - Treat git submodules as single dotfiles so they are synced/installed as a
   whole - this is useful for dependencies such as vim or zsh plugins
+- Run `sdf` with `--upgrade` or `-u` to pull your dotfiles repo and all
+  submodules before syncing
 
 ## Install
 
