@@ -48,3 +48,21 @@ ignore_patterns=('*foo*' '*bar*')
 ```
 
 ### Syncing actions
+
+To always keep your tools up to date with the most recent changes to their
+config, `sdf` allows you to define commands to run whenever it syncs a file
+matching a pattern. This is configured with the associative zsh array
+`dotfiles_actions` in your `sdfrc`. This array's keys are regex patterns and its
+values are commands to run whenever a file matching the pattern key is synced.
+
+To source your `zshrc` whenever anything from the `.zsh` directory in your
+dotfiles is synced, you can add the following to your `sdfrc`.
+
+```zsh
+dotfiles_actions=( \
+    ['^\.zsh/']="source $HOME/.zsh/.zshrc" \
+)
+```
+
+You can find more examples for actions in [my
+`sdfrc`](https://github.com/jannis-baum/dotfiles/blob/main/.sdfrc).
