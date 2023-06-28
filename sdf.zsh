@@ -20,6 +20,7 @@ function sdf() {
         case "$arg" in
             "-h" | "--help") arg_help=1; continue;;
             "-y" | "--yes") local arg_yes=1; continue;;
+            "-A" | "--no-actions") local arg_no_actions=1; continue;;
         esac
         [[ -z "$arg" ]] && continue
         if [[ "$arg" == "-"* ]]; then
@@ -36,6 +37,7 @@ usage: sdf [-h] [-y] [-A]
 options:
   -h, --help            show this help message and exit
   -y, --yes             install all changed dotfiles without prompting
+  -A, --no-actions      don't run configured install actions
 EOF
     fi
 
@@ -84,6 +86,7 @@ EOF
             mkdir -p "$(dirname $2)"
             cp -r "$1" "$2"
             printf '\n'
+            [[ -n "$arg_no_actions" ]] && return
             for rgx cmd in ${(kv)dotfiles_actions}; do
                 [[ "$1" =~ "$rgx" ]] && echo "  \e[2m\e[3m-> $cmd\e[0m" && ${(z)cmd}
             done
