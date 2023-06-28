@@ -16,8 +16,9 @@ sync-dotfiles or `sdf` is a package manager for your dotfiles.
 ## Install
 
 Simply source `sdf.zsh` in your `.zshrc`. This works best if you keep this
-repository as a submodule in your dotfiles repo! You can see how I do this
-myself in [my dotfiles](https://github.com/jannis-baum/dotfiles).
+repository as a submodule in your dotfiles repo so `sdf` can manage itself! You
+can see how I do this myself in [my
+dotfiles](https://github.com/jannis-baum/dotfiles/blob/main/.zsh/.zshrc).
 
 ## Configuration
 
