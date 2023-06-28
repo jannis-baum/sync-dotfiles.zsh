@@ -14,6 +14,32 @@ function _sdf_dir_diff() {
 }
 
 function sdf() {
+    # parse args
+    local arg_help
+    for arg in "$@"; do
+        case "$arg" in
+            "-h" | "--help") arg_help=1; continue;;
+            "-y" | "--yes") local arg_yes=1; continue;;
+        esac
+        [[ -z "$arg" ]] && continue
+        if [[ "$arg" == "-"* ]]; then
+            echo "Illegal option: $arg"
+            arg_help=1
+            continue
+        fi
+    done
+
+    if [[ -n "$arg_help" ]]; then
+      cat <<EOF
+usage: sdf [-h] [-y] [-A]
+
+options:
+  -h, --help            show this help message and exit
+  -y, --yes             install all changed dotfiles without prompting
+EOF
+    fi
+
+
     # load config, go to dotfiles_dir and setup ignore
     local dotfiles_actions dotfiles_dir ignore_patterns
     typeset -A dotfiles_actions
@@ -41,12 +67,19 @@ function sdf() {
     ignore_patterns+=('.git/*' '.gitignore' '.gitmodules')
 
     # make it possible for read to get answer from stdin (e.g. `yes`)
-    [[ -t 0 ]] && readq_flags=('-q') || readq_flags=('-q' '-u' '0' '-E')
+    [[ -t 0 ]] && local readq_flags=('-q') || local readq_flags=('-q' '-u' '0' '-E')
+    function _sdf_prompt_install() {
+        if [[ -n "$arg_yes" ]]; then
+            printf "installing $1"
+            return 0
+        fi
+        printf "install $1? (y/*) "
+        read $readq_flags
+    }
 
     # prompt to install of $1 to $2, i.a. run custom command
     function _sdf_install_dotfile() {
-        printf "install $1? (y/*) "
-        if read $readq_flags; then
+        if _sdf_prompt_install $1; then
             [[ -d $2 ]] && rm -rf $2 # directories aren't overwritten -> delete first
             mkdir -p "$(dirname $2)"
             cp -r "$1" "$2"
