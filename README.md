@@ -1,6 +1,8 @@
 # sync-dotfiles.zsh
 
-sync-dotfiles or `sdf` is a package manager for your dotfiles.
+sync-dotfiles or `sdf` is a package manager for your dotfiles that takes care of
+your own configuration files as well as all of your plugins/dependencies and
+helps you automatically reload configs.
 
 ![`sdf`-showcase](../assets/sdf-showcase.gif)
 
