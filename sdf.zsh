@@ -32,8 +32,8 @@ function sdf() {
     done
 
     if [[ -n "$arg_help" ]]; then
-      cat <<EOF
-usage: sdf [-h] [-y] [-A]
+        cat <<EOF
+usage: sdf [-h] [-y] [-A] [-u]
 
 options:
   -h, --help            show this help message and exit
@@ -41,6 +41,7 @@ options:
   -A, --no-actions      don't run configured install actions
   -u, --upgrade         pull dotfiles repo and all submodules before syncing
 EOF
+        return
     fi
 
 
