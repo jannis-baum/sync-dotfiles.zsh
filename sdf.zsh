@@ -90,7 +90,7 @@ EOF
             printf '\n'
             [[ -n "$arg_no_actions" ]] && return
             for rgx cmd in ${(kv)dotfiles_actions}; do
-                [[ "$1" =~ "$rgx" ]] && echo "  \e[2m\e[3m-> $cmd\e[0m" && ${(z)cmd}
+                [[ "$1" =~ "$rgx" ]] && echo "  \e[2m\e[3m-> $cmd\e[0m" && eval "$cmd"
             done
         else printf '\n'
         fi
