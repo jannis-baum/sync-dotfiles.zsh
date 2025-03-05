@@ -2,7 +2,7 @@
 # stdin: paths
 # args: source destination
 function _sdf_destination() {
-    sed "s|^$1|$2/|"
+    sed "s|^$1|$2|"
 }
 
 # check if directory is different from source to destination
@@ -55,8 +55,8 @@ EOF
 
 
     # load config, cd dotfiles_dir and setup ignore ----------------------------
-    local actions dotfiles_dir ignore_patterns
-    typeset -A actions
+    local actions dotfiles_dir ignore_patterns mapping
+    typeset -A actions mapping
 
     [[ -z "$SDFRC_PATH" ]] && local SDFRC_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/sdfrc"
     test -f "$SDFRC_PATH" && source "$SDFRC_PATH"
@@ -79,6 +79,14 @@ EOF
     fi
 
     ignore_patterns+=('.git/*' '.gitignore' '.gitmodules')
+    # ignored helper
+    function _sdf_is_ignored() {
+        for pattern in ${(@)ignore_patterns}; do
+            [[ "$1" == ${~pattern} ]] && return 0
+        done
+        return 1
+    }
+
 
     # prompt installation ------------------------------------------------------
     [[ -t 0 ]] && local readq_flags=('-q') || local readq_flags=('-q' '-u' '0' '-E')
@@ -106,38 +114,47 @@ EOF
         fi
     }
 
-    # submodules ---------------------------------------------------------------
-    # ignored helper
-    function _sdf_is_ignored() {
-        for pattern in ${(@)ignore_patterns}; do
-            [[ "$1" == ${~pattern} ]] && return 0
-        done
-        return 1
-    }
-    # find submodules
+    # find submodules ----------------------------------------------------------
     if [[ -f '.gitmodules' ]]; then
         local -a submodules
         for submodule in $(rg --no-line-number --replace '' '^\s*path ?= ?' '.gitmodules'); do
             _sdf_is_ignored "$submodule" || submodules+="$submodule"
         done
-        ignore_patterns+=("${(@)submodules}")
     fi
-    # install submodules if different from submodule in $HOME
-    for sm in $submodules; do
-        if [[ $(_sdf_dir_diff "$sm" "" "$HOME") != "0" || ! -d "$HOME/$sm" ]]; then
-            _sdf_install_dotfile "$sm" "$HOME/$sm"
-        fi
-    done
 
-    # dotfiles -----------------------------------------------------------------
-    local fd_opts=('--strip-cwd-prefix' '--type' 'f' '--type' 'l' '--hidden' '--no-ignore')
-    fd_opts+=("${(z)$(printf '%s\n' ${ignore_patterns} | sed 's/^/--exclude /' | tr '\n' ' ')}")
-    local dotfiles=("${(f)$(fd $fd_opts)}")
-    # install files if different from file in $HOME
-    for df in $dotfiles; do
-        if ! cmp "$df" "$HOME/$df" &> /dev/null; then
-            _sdf_install_dotfile "$df" "$HOME/$df"
+    # install dotfiles according to mapping ------------------------------------
+    for source destination in ${(kv)mapping}; do
+        if ! test -d "$source"; then
+            echo "source directory $source does not exist"
+            continue
         fi
+
+        local ignores=("${(@)ignore_patterns}")
+
+        # install submodules
+        for sm in $submodules; do
+            # skip if not in current mapping.source
+            [[ $sm == "$source"* ]] || continue
+            # install submodule if necessary
+            local sm_dest="$(_sdf_destination "$source" "$destination" <<<"$sm")"
+            if [[ $(_sdf_dir_diff "$sm" "$source" "$destination") != "0" || ! -d "$sm_dest" ]]; then
+                _sdf_install_dotfile "$sm" "$sm_dest"
+            fi
+            # track for to ignore in search for dotfiles
+            ignores+="$(_sdf_destination "$source/" "" <<<"$sm")"
+        done
+
+        # install dotfiles
+        local fd_opts=('--type' 'f' '--type' 'l' '--hidden' '--no-ignore')
+        fd_opts+=("${(z)$(printf '%s\n' ${ignores} | sed 's/^/--exclude /' | tr '\n' ' ')}")
+        local dotfiles=("${(f)$(fd $fd_opts . "$source")}")
+        # install files if different from file in $HOME
+        for df in $dotfiles; do
+            local df_dest="$(_sdf_destination "$source" "$destination" <<<"$df")"
+            if ! cmp "$df" "$df_dest" &> /dev/null; then
+                _sdf_install_dotfile "$df" "$df_dest"
+            fi
+        done
     done
 
     cd $prev_dir
