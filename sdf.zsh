@@ -46,8 +46,8 @@ EOF
 
 
     # load config, cd dotfiles_dir and setup ignore ----------------------------
-    local dotfiles_actions dotfiles_dir ignore_patterns
-    typeset -A dotfiles_actions
+    local actions dotfiles_dir ignore_patterns
+    typeset -A actions
 
     [[ -z "$SDFRC_PATH" ]] && local SDFRC_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/sdfrc"
     test -f "$SDFRC_PATH" && source "$SDFRC_PATH"
@@ -90,7 +90,7 @@ EOF
             cp -r "$1" "$2"
             printf '\n'
             [[ -n "$arg_no_actions" ]] && return
-            for rgx cmd in ${(kv)dotfiles_actions}; do
+            for rgx cmd in ${(kv)actions}; do
                 [[ "$1" =~ "$rgx" ]] && echo "  \e[2m\e[3m-> $cmd\e[0m" && eval "$cmd"
             done
         else printf '\n'
