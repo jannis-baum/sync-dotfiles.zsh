@@ -36,14 +36,16 @@ The minimal configuration is to set the environment variable `DOTFILES_DIR` to
 let `sdf` know where to find your dotfiles repo.
 
 For all additional configuration or if you don't want this environment variable,
-you can create an `sdfrc` file. This file should be located at `~/.sdfrc`, but
-you can set `SDFRC_PATH` if you prefer to keep it somewhere else.
+you can create an `sdfrc` file. This file should be located at
+`$XDG_CONFIG_HOME/sdfrc` or `~/.config/sdfrc` if `$XDG_CONFIG_HOME` is not set,
+but you can set `SDFRC_PATH` if you prefer to keep it somewhere else.
 
 Using the `sdfrc`, you can set `dotfiles_dir` instead to set your repository's
 location.
 
-See [my `sdfrc`](https://github.com/jannis-baum/dotfiles/blob/main/.sdfrc) for
-an example of what this file can look like.
+See [my
+`sdfrc`](https://github.com/jannis-baum/dotfiles/blob/main/.config/sdfrc) for an
+example of what this file can look like.
 
 ### Ignoring patterns from being synced
 
@@ -73,7 +75,7 @@ dotfiles_actions=( \
 ```
 
 You can find more examples for actions in [my
-`sdfrc`](https://github.com/jannis-baum/dotfiles/blob/main/.sdfrc).
+`sdfrc`](https://github.com/jannis-baum/dotfiles/blob/main/.config/sdfrc).
 
 ## Running `sdf`
 
