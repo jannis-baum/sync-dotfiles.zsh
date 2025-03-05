@@ -1,3 +1,12 @@
+# transform stdin paths from source to destination
+# stdin: paths
+# args: source destination
+function _sdf_destination() {
+    sed "s|^$1|$2/|"
+}
+
+# check if directory is different from source to destination
+# args: dir source destination
 function _sdf_dir_diff() {
     # - find all files in dotfiles subrepo
     # - get modified time for these and the corresponding files in $HOME
@@ -7,7 +16,7 @@ function _sdf_dir_diff() {
     paste -sd '+' \
         <(paste -d '>' \
             <(xargs stat -f %m 2> /dev/null <<<"$files") \
-            <(sed "s|^|$HOME/|" <<<"$files" | xargs stat -f %m 2> /dev/null) \
+            <(_sdf_destination "$2" "$3" <<<"$files" | xargs stat -f %m 2> /dev/null) \
             | sed -e 's/^.*>$/1/' -e 's/^>.*$/1/' \
             | bc) \
         | bc
@@ -115,7 +124,7 @@ EOF
     fi
     # install submodules if different from submodule in $HOME
     for sm in $submodules; do
-        if [[ $(_sdf_dir_diff "$sm") != "0" || ! -d "$HOME/$sm" ]]; then
+        if [[ $(_sdf_dir_diff "$sm" "" "$HOME") != "0" || ! -d "$HOME/$sm" ]]; then
             _sdf_install_dotfile "$sm" "$HOME/$sm"
         fi
     done
