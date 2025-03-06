@@ -60,11 +60,10 @@ EOF
 
     [[ -z "$SDFRC_PATH" ]] && local SDFRC_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/sdfrc"
     test -f "$SDFRC_PATH" && source "$SDFRC_PATH"
-    [[ -z "$dotfiles_dir" ]] && dotfiles_dir="$DOTFILES_DIR"
 
     if [[ -z "$dotfiles_dir" ]]; then
-        echo 'Please set your dotfiles directory either in your sdfrc or as the environment variable $DOTFILES_DIR'
-        return
+        echo 'Please set your dotfiles directory in your sdfrc'
+        return 1
     fi
 
     dotfiles_dir=$(realpath $dotfiles_dir)

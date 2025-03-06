@@ -8,8 +8,8 @@ helps you automatically reload configs.
 
 ## Features
 
-- Manage your dotfiles repo with all files exactly where they should be in your
-  home directory
+- Manage your dotfiles repo with a mirrored directory structure according to
+  your preferred mapping
 - Automatically detect changes in these files and be prompted to install them to
   the corresponding location in your home directory
 - Configure actions to run when installing files such as automatically sourcing
@@ -32,20 +32,25 @@ dotfiles](https://github.com/jannis-baum/dotfiles/blob/main/.zsh/.zshrc).
 
 ## Configuration
 
-The minimal configuration is to set the environment variable `DOTFILES_DIR` to
-let `sdf` know where to find your dotfiles repo.
+To use `sdf`, you need an `sdfrc` (zsh script) file. This file will be sourced
+by `sdf`, and should be located at `$XDG_CONFIG_HOME/sdfrc` (or
+`~/.config/sdfrc` if `$XDG_CONFIG_HOME` is not set). You can also set
+`$SDFRC_PATH` if you prefer to keep it somewhere else.
 
-For all additional configuration or if you don't want this environment variable,
-you can create an `sdfrc` file. This file should be located at
-`$XDG_CONFIG_HOME/sdfrc` or `~/.config/sdfrc` if `$XDG_CONFIG_HOME` is not set,
-but you can set `SDFRC_PATH` if you prefer to keep it somewhere else.
+A minimal `sdfrc` should set the variable `dotfiles_dir` to the directory of
+your dotfiles repository, and the associative array `mapping` that defines where
+to install what parts of the repository. The `mapping` could look as follows
 
-Using the `sdfrc`, you can set `dotfiles_dir` instead to set your repository's
-location.
+```zsh
+mapping=( \
+    [home]=~ \
+    [config]=~/.config \
+)
+```
 
-See [my
-`sdfrc`](https://github.com/jannis-baum/dotfiles/blob/main/.config/sdfrc) for an
-example of what this file can look like.
+If you keep a `home/` and a `config/` directory in the root of your dotfiles
+repository, whose contents are installed to `~/` and `~/.config` respectively.
+Make sure you use absolute paths don't add any `/` to the end of them.
 
 ### Ignoring patterns from being synced
 
@@ -75,7 +80,7 @@ actions=( \
 ```
 
 You can find more examples for actions in [my
-`sdfrc`](https://github.com/jannis-baum/dotfiles/blob/main/.config/sdfrc).
+`sdfrc`](https://github.com/jannis-baum/dotfiles/blob/main/config/sdfrc).
 
 ## Running `sdf`
 
