@@ -66,9 +66,9 @@ EOF
         return 1
     fi
 
-    dotfiles_dir=$(realpath $dotfiles_dir)
-    local prev_dir=$(pwd)
-    cd $dotfiles_dir
+    dotfiles_dir="$(realpath "$dotfiles_dir")"
+    local prev_dir="$(pwd)"
+    cd "$dotfiles_dir"
 
     if [[ -n "$arg_upgrade" ]]; then
         echo "\e[1mupgrading repo\e[0m"
@@ -100,9 +100,9 @@ EOF
 
     # install & run actions ----------------------------------------------------
     function _sdf_install_dotfile() {
-        if _sdf_prompt_install $1; then
-            [[ -d $2 ]] && rm -rf $2 # directories aren't overwritten -> delete first
-            mkdir -p "$(dirname $2)"
+        if _sdf_prompt_install "$1"; then
+            [[ -d "$2" ]] && rm -rf "$2" # directories aren't overwritten -> delete first
+            mkdir -p "$(dirname "$2")"
             cp -r "$1" "$2"
             printf '\n'
             [[ -n "$arg_no_actions" ]] && return
@@ -133,7 +133,7 @@ EOF
         # install submodules
         for sm in $submodules; do
             # skip if not in current mapping.source
-            [[ $sm == "$source"* ]] || continue
+            [[ "$sm" == "$source"* ]] || continue
             # install submodule if necessary
             local sm_dest="$(_sdf_destination "$source" "$destination" <<<"$sm")"
             if [[ $(_sdf_dir_diff "$sm" "$source" "$destination") != "0" || ! -d "$sm_dest" ]]; then
@@ -156,5 +156,5 @@ EOF
         done
     done
 
-    cd $prev_dir
+    cd "$prev_dir"
 }
